@@ -32,7 +32,8 @@ macOS / Linux：
 ```bash
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
   --repo wzhoudargon/chinese-poetry-video-pipeline \
-  --path skills/chinese-poetry-video-pipeline
+  --path skills/chinese-poetry-video-pipeline \
+  --ref v0.1.0
 ```
 
 Windows PowerShell：
@@ -40,7 +41,8 @@ Windows PowerShell：
 ```powershell
 python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-skill-from-github.py" `
   --repo wzhoudargon/chinese-poetry-video-pipeline `
-  --path skills/chinese-poetry-video-pipeline
+  --path skills/chinese-poetry-video-pipeline `
+  --ref v0.1.0
 ```
 
 私有仓库需要目标电脑已经登录 GitHub，或配置有权读取该仓库的 `GH_TOKEN` / `GITHUB_TOKEN`。
@@ -49,6 +51,7 @@ python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-s
 
 ```bash
 git clone https://github.com/wzhoudargon/chinese-poetry-video-pipeline.git
+git -C chinese-poetry-video-pipeline checkout v0.1.0
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
 cp -R chinese-poetry-video-pipeline/skills/chinese-poetry-video-pipeline \
   "${CODEX_HOME:-$HOME/.codex}/skills/"
@@ -99,4 +102,3 @@ python3 scripts/validate_repo.py
 ```
 
 本仓库尚未选择公开许可证；在确定公开或私有发布方式前，默认保留全部权利。
-
