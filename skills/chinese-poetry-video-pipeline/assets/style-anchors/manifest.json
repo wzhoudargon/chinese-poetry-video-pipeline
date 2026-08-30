@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "purpose": "Approved visual-quality and relationship anchors for high-fidelity reproduction mode",
+  "anchors": [
+    {
+      "file": "01-celestial-scale.png",
+      "sha256": "96348259eb890b5c9ccc70796912f4e78c50cbb35c024df79d12259750ade050",
+      "width": 1086,
+      "height": 1448,
+      "role": "celestial scale, partial unattainable palace, translucent jade, restrained gold, layered cloud depth"
+    },
+    {
+      "file": "02-monochrome-youth.png",
+      "sha256": "322c0d37753acec1225af79c305b082b369f987515232584ad8b5d0d5c60bdbd",
+      "width": 1086,
+      "height": 1448,
+      "role": "Eastern negative space, monochrome field, cinnabar accent, garment motion, non-literal time"
+    },
+    {
+      "file": "03-human-gaze-distance.png",
+      "sha256": "69f3b1487f8b5743703833d678f2bdf60648771f1beb3656136ddf62e90da7f3",
+      "width": 1086,
+      "height": 1448,
+      "role": "over-shoulder gaze, bridge-and-river depth, geometric sightline, brilliant-versus-dim lantern contrast"
+    }
+  ]
+}

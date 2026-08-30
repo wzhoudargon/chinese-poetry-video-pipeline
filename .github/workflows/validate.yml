@@ -1,0 +1,21 @@
+name: Validate portable skill
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install media probe
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fontconfig
+      - name: Validate repository
+        run: python3 scripts/validate_repo.py
+      - name: Check environment contract
+        run: python3 skills/chinese-poetry-video-pipeline/scripts/check_environment.py --json
+

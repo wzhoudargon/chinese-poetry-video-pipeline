@@ -1,0 +1,4 @@
+interface:
+  display_name: "古诗词意境视频流水线"
+  short_description: "从选诗、关键帧与 H3 生成到剪辑及标准发布包"
+  default_prompt: "使用 $chinese-poetry-video-pipeline 为这首古诗规划并制作一条完整的东方美学短视频。"
