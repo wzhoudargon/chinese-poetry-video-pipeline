@@ -1,6 +1,6 @@
 ---
 name: chinese-poetry-video-pipeline
-description: Plan and produce complete 15–35 second Chinese-poetry aesthetic videos, from poem selection and verified interpretation through visual direction, keyframes, MiniMax H3 image-to-video prompts, ChatCut editing, export, cover, title, and social copy. Use for 古诗词意境短片、东方美学诗词视频或其中任一延续阶段；do not use for unrelated generic fantasy videos.
+description: Plan and produce Chinese-poetry aesthetic videos, including long-form and full-text works, from verified interpretation and story scripting through visual direction, keyframes, MiniMax H3 image-to-video prompts, ChatCut editing, export, cover, title, and social copy. Use for 古诗词意境短片、东方美学诗词视频、诗词或古文全篇影像化及其中任一延续阶段；do not use for unrelated generic fantasy videos.
 ---
 
 # Chinese Poetry Video Pipeline
@@ -13,6 +13,7 @@ Turn one poem into a coherent, reviewable production system. The poem determines
 - **Stage only:** complete only the requested stage and leave a precise next step.
 - **Continue:** inspect existing project state and approved assets before doing new work. Preserve approved decisions unless the user changes them.
 - **Batch series:** keep publishing identity consistent, but deliberately vary each poem’s visual medium, palette, composition, focal lengths, and motion grammar.
+- **Long form:** for a full text, multi-chapter work, or target longer than 35 seconds, remove the default duration cap, lock a reviewable story script before storyboarding, and divide production into approved chapters and scene cards.
 - **High-fidelity reproduction:** when the user asks for the same series identity across machines or projects, read [references/reproducibility.md](references/reproducibility.md), verify the target environment, use the bundled style anchors, and score conformance before delivery.
 
 ## Required routing
@@ -20,6 +21,7 @@ Turn one poem into a coherent, reviewable production system. The poem determines
 Read [references/quality-gates.md](references/quality-gates.md) for every use. Then read only the stage references needed now:
 
 - Selection, source text, or interpretation: [references/poetry-interpretation.md](references/poetry-interpretation.md)
+- Full-text adaptation, story structure, narration, chapters, or scene cards: [references/story-script.md](references/story-script.md)
 - Style, storyboard, composition, or still-image prompts: [references/visual-system.md](references/visual-system.md)
 - MiniMax H3 prompts, batch files, or cloud generation: [references/minimax-h3.md](references/minimax-h3.md)
 - ChatCut assembly, typography, seal, sound, or export: [references/chatcut-editing.md](references/chatcut-editing.md)
@@ -37,6 +39,7 @@ Track one current stage and one next action in `00-project-state.json`.
 |---|---|---|
 | `selected` | verified poem candidate and production fit | text/version is reliable; poem has a visual contradiction and motion potential |
 | `interpreted` | literal meaning, emotional engine, visual thesis, sound thesis | the concept explains more than a literal tableau |
+| `scripted` | approved story spine, chapter arc, narration plan, and scene cards | source coverage, value reversal, duration budget, and image/narration separation pass |
 | `visual_approved` | style bible, sequence arc, lens/composition matrix | consecutive shots differ meaningfully; style belongs to this poem |
 | `keyframes_approved` | numbered prompts and approved 3:4 stills | every still passes composition, clarity, anatomy, gaze, continuity, and texture checks |
 | `h3_prompts_ready` | readable prompts, batch text, upload order | image/task/prompt counts match; each task has executable motion and no contradictions |
@@ -61,6 +64,7 @@ Do not jump from interpretation directly to paid video generation. A user may au
 10. **Verify pixels, not descriptions.** Inspect actual stills, generated clips, composed ChatCut frames, and exported files before reporting completion.
 11. **Package, do not dump.** Keep publish-ready assets separate from production archives. A final package is versioned and immutable; a correction creates `v02` instead of silently replacing `v01`.
 12. **Define similarity before claiming it.** A score near 90 means the same creative decisions, visual discipline, prompt grammar, edit identity, and delivery contract—not identical generated pixels. Exact frames cannot be guaranteed across model versions or random generations.
+13. **Separate text, narration, and image.** In long-form work, verified source wording, the final spoken track, and the visual action plan are three linked but distinct layers. Never disguise creative bridge text as the original, and never make every image mechanically repeat the narration.
 
 ## Tool coordination
 
@@ -73,6 +77,7 @@ Do not jump from interpretation directly to paid video generation. A user may au
 ## Review rhythm
 
 - Present poem interpretation and the visual thesis together.
+- For long-form or full-text work, present the one-sentence story, chapter arc, narration policy, recurring motif, value reversal, and scene-card sample before keyframe generation.
 - Present the sequence plan before generating all keyframes when the direction is new.
 - Generate or approve a representative first frame before batching a style-sensitive sequence.
 - Review stills as a sequence, not only one by one.
@@ -84,6 +89,7 @@ Do not jump from interpretation directly to paid video generation. A user may au
 A complete project should contain:
 
 - verified poem and interpretation;
+- an approved story script for long-form/full-text work, including source coverage, narration, chapters, scene cards, transitions, and sound progression;
 - style bible, storyboard, and shot-variation matrix;
 - numbered keyframe prompts and approved images;
 - per-shot H3 prompts, batch prompt file, upload order, and task log;
