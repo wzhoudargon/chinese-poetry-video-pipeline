@@ -32,6 +32,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--copy", dest="copy_path", help="Publishing markdown")
     parser.add_argument("--poem-source", help="Verified poem text and source markdown")
     parser.add_argument("--creative-note", help="Interpretation and visual translation markdown")
+    parser.add_argument("--story-script", help="Approved story script; required for long-form projects")
     parser.add_argument("--voice-script", help="Final subtitle and recitation markdown")
     parser.add_argument("--qa", help="Completed publishing QA markdown")
     parser.add_argument("--clean-video", help="Optional clean/no-text final MP4")
@@ -411,12 +412,21 @@ def main() -> None:
     copy_source = resolve_input(project, args.copy_path, "06-发布/标题与笔记.md")
     poem_source = resolve_input(project, args.poem_source, "01-诗词与意境/原文与版本.md")
     creative_note = resolve_input(project, args.creative_note, "01-诗词与意境/意境拆解.md")
+    duration_target = float(target.get("final_duration_seconds", 0) or 0)
+    long_form = bool(target.get("long_form")) or duration_target > 35
+    story_script = None
+    if args.story_script or long_form:
+        story_script = resolve_input(
+            project, args.story_script, "01-诗词与意境/故事脚本.md"
+        )
     voice_script = resolve_input(project, args.voice_script, "05-ChatCut/字幕与朗诵文本.md")
     qa_source = resolve_input(project, args.qa, "06-发布/发布检查.md")
 
     copy_markdown = assert_complete_text(copy_source, "Publishing copy")
     assert_complete_text(poem_source, "Poem source")
     assert_complete_text(creative_note, "Creative note")
+    if story_script:
+        assert_complete_text(story_script, "Story script")
     assert_complete_text(voice_script, "Subtitle and recitation text")
     assert_complete_text(qa_source, "Final QA")
     final_title, plain_copy = build_plain_copy(copy_markdown)
@@ -456,6 +466,7 @@ def main() -> None:
     plain_destination = building / "01-发布成品/文案/发布文案-纯文本.txt"
     poem_destination = building / "02-内容依据/原文与出处.md"
     creative_destination = building / "02-内容依据/意境与创作说明.md"
+    story_destination = building / "02-内容依据/故事脚本.md" if story_script else None
     voice_destination = building / "02-内容依据/字幕与朗诵文本.md"
     qa_destination = building / "04-质量验收/最终验收.md"
 
@@ -466,6 +477,8 @@ def main() -> None:
     plain_destination.write_text(plain_copy, encoding="utf-8")
     copy_file(poem_source, poem_destination)
     copy_file(creative_note, creative_destination)
+    if story_script and story_destination:
+        copy_file(story_script, story_destination)
     copy_file(voice_script, voice_destination)
     copy_file(qa_source, qa_destination)
 
@@ -528,6 +541,11 @@ def main() -> None:
         "content_basis": {
             "poem_source": poem_destination.relative_to(building).as_posix(),
             "creative_note": creative_destination.relative_to(building).as_posix(),
+            **(
+                {"story_script": story_destination.relative_to(building).as_posix()}
+                if story_destination
+                else {}
+            ),
             "subtitle_and_recitation": voice_destination.relative_to(building).as_posix(),
         },
         "quality": {
@@ -564,6 +582,7 @@ def main() -> None:
 
 - [x] 原文与出处
 - [x] 意境与创作说明
+{f'- [x] 故事脚本：`{story_destination.relative_to(building).as_posix()}`' if story_destination else '- [x] 故事脚本：短片项目，不要求'}
 - [x] 字幕与朗诵文本
 - [x] 最终验收记录
 - [x] `manifest.json`
