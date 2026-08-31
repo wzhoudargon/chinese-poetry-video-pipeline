@@ -70,6 +70,7 @@ def main() -> None:
         },
         "target": {
             "final_duration_seconds": args.duration,
+            "long_form": args.duration > 35,
             "aspect_ratio": "3:4",
             "h3_source_clip_seconds": 8,
             "timeline": {"width": 1080, "height": 1440, "fps": 30},
@@ -78,6 +79,7 @@ def main() -> None:
         "stage": "selected",
         "approvals": {
             "poem_text_verified": False,
+            "story_script": False,
             "visual_direction": False,
             "keyframes": False,
             "cloud_generation_cost": False,
@@ -87,6 +89,7 @@ def main() -> None:
             "release_package": False,
         },
         "artifacts": {
+            "story_script_path": "01-诗词与意境/故事脚本.md",
             "approved_keyframes": [],
             "h3_task_ids": [],
             "approved_clips": [],
@@ -145,6 +148,59 @@ def main() -> None:
 
         | 时段 | 诗句 | 停顿与重音 | 画面功能 |
         |---|---|---|---|
+        """,
+    )
+    write_text(
+        project / "01-诗词与意境/故事脚本.md",
+        f"""
+        # 《{args.title}》故事脚本 v01
+
+        > 目标时长：{args.duration} 秒
+        > 适用模式：{'长片/全文' if args.duration > 35 else '短片（按需使用）'}
+
+        ## 导演总纲
+
+        - 文本范围与版本：
+        - 一句话故事：
+        - 观众起点 → 终点：
+        - 真正的主角：
+        - 贯穿母题及变化：
+        - 价值反转：
+        - 旁白规则：
+        - 视觉与声音总弧线：
+
+        ## 时长与章节表
+
+        | 章 | 时段 | 原文范围/字数 | 戏剧任务 | 进入→变化→退出 | 母题变化 | 朗诵/留白 | 场数 |
+        |---|---|---|---|---|---|---|---:|
+
+        ## 场景卡
+
+        ### C01-S01 场名｜00:00–00:00
+
+        - 原文/旁白：
+        - 画面故事：
+        - 戏剧任务：
+        - 主动作与结束状态：
+        - 声音：
+        - 转场：
+        - 风险：
+
+        ## 全文覆盖表
+
+        | 原文段落 | 朗诵策略 | 对应章/场 | 画面功能 | 状态 |
+        |---|---|---|---|---|
+
+        ## 导演审核
+
+        - 故事主轴：待审核
+        - 全文覆盖：待审核
+        - 时长预算：待审核
+        - 章节推进：待审核
+        - 画面可执行性：待审核
+        - 声音与转场：待审核
+        - 价值反转：待审核
+        - 用户批准：待审核
         """,
     )
     write_text(
