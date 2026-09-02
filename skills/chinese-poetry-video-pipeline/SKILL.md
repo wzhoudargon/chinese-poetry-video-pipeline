@@ -24,8 +24,8 @@ Read [references/quality-gates.md](references/quality-gates.md) for every use. T
 - Full-text adaptation, story structure, narration, chapters, or scene cards: [references/story-script.md](references/story-script.md)
 - Style, storyboard, composition, or still-image prompts: [references/visual-system.md](references/visual-system.md)
 - MiniMax H3 prompts, batch files, or cloud generation: [references/minimax-h3.md](references/minimax-h3.md)
-- ChatCut assembly, typography, seal, sound, or export: [references/chatcut-editing.md](references/chatcut-editing.md)
-- Cover, titles, or social copy: [references/publishing.md](references/publishing.md)
+- ChatCut assembly, typography, approved-seal placement, sound, or export: [references/chatcut-editing.md](references/chatcut-editing.md)
+- Cover, poet-specific AI seal design, titles, or social copy: [references/publishing.md](references/publishing.md)
 - Final delivery, versioning, manifest, or handoff: [references/release-package.md](references/release-package.md)
 - Cross-machine installation, style matching, or a “90% similar” request: [references/reproducibility.md](references/reproducibility.md)
 
@@ -44,9 +44,9 @@ Track one current stage and one next action in `00-project-state.json`.
 | `keyframes_approved` | numbered prompts and approved 3:4 stills | every still passes composition, clarity, anatomy, gaze, continuity, and texture checks |
 | `h3_prompts_ready` | readable prompts, batch text, upload order | image/task/prompt counts match; each task has executable motion and no contradictions |
 | `clips_approved` | downloaded H3 clips and shot-level QC | identity, geometry, motion, camera, sound, and duration are usable |
-| `chatcut_edited` | editable ChatCut timeline with text, sound, and seal | pacing, typography, narration, and overlays pass composed-frame review |
+| `chatcut_edited` | editable ChatCut timeline with text, sound, and the approved custom AI seal | pacing, typography, narration, seal hierarchy, and overlays pass composed-frame review |
 | `exported` | verified local MP4 and project export record | resolution, fps, duration, audio, and representative frames are correct |
-| `publish_ready` | versioned standard output package | final video, cover, copy, source record, QA, manifest, and checksums are complete and internally consistent |
+| `publish_ready` | versioned standard output package | final video, cover, copy, seal records, source record, QA, manifest, and checksums are complete and internally consistent |
 
 Do not jump from interpretation directly to paid video generation. A user may authorize an end-to-end run, but costly cloud submission still requires approved final parameters and expected cost unless that authorization was already explicit.
 
@@ -54,7 +54,7 @@ Do not jump from interpretation directly to paid video generation. A user may au
 
 1. **Begin with the poem’s conflict.** Examples of useful structures include繁华与孤独、天上与人间、盛时与迟暮、物是与人非、路阻与心行. Do not treat these examples as a fixed catalog.
 2. **Translate, do not illustrate mechanically.** Every shot needs a visual proposition: a relationship, transformation, delay, absence, weight, distance, or reversal.
-3. **Choose a fresh visual language per poem.** Series continuity should come mainly from editorial typography, seal logic, pacing discipline, and quality—not identical scenery, color grading, or character framing.
+3. **Choose a fresh visual language per poem.** Series continuity should come mainly from clear information hierarchy, per-poem seal quality, pacing discipline, and quality—not identical scenery, color grading, character framing, or a reused generic stamp.
 4. **Vary camera grammar.** Never use the same view, focal-length family, subject scale, and composition in consecutive shots. Consider high distance, deep distance, and level distance from Chinese painting where they strengthen meaning.
 5. **Build depth structurally.** Use foreground occlusion, scale, paths, bridges, water, cloth, bamboo, architecture, or light to connect foreground–midground–background. Fog may separate planes but must not hide structure.
 6. **Keep images clear.** No smear, repeated fractured texture, texture proliferation, indiscriminate glow, heavy fog, soft-focus masking, malformed hands, duplicated figures, unreadable architecture, accidental text, or watermark.
@@ -68,7 +68,7 @@ Do not jump from interpretation directly to paid video generation. A user may au
 
 ## Tool coordination
 
-- Use the `imagegen` skill for keyframe creation or image editing.
+- Use the `imagegen` skill for keyframe creation, image editing, and poet-specific seal generation.
 - For current poem text, authorship, variants, or historical interpretation, use reliable primary or authoritative sources when verification is needed; distinguish source facts from creative inference.
 - For ChatCut work, load the relevant ChatCut skills. Commonly needed: `chatcut:chatcut-plugin-basics`, `chatcut:asset-import`, `chatcut:create-motion-graphics`, `chatcut:verification`, and `chatcut:export`.
 - For a user-operated MiniMax H3 WebUI, prepare files and exact input order first. Use browser/computer control only when requested or authorized. Record task IDs and do not silently resubmit failed paid tasks.
@@ -97,6 +97,7 @@ A complete project should contain:
 - ChatCut project/timeline record and visual QC;
 - verified export;
 - cover, title options, note copy, and hashtags.
+- an approved poet- or poem-specific AI seal asset, its design brief and prompt, and exact-text QA.
 - a versioned standard output package containing publish-ready assets, production archive, manifest, checksums, and final QA.
 
 Do not fabricate missing files, task IDs, exports, approvals, or verification. Mark them pending in project state.
