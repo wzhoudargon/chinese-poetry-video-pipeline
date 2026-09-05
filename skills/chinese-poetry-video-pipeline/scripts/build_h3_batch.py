@@ -27,6 +27,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--images-dir", required=True)
     parser.add_argument("--prompts-dir", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--pair-by", choices=("id", "order"), default="id",
+                        help="Single-frame tasks match leading shot numbers; use order only for a reviewed upload order")
     parser.add_argument("--duration-seconds", type=float, default=8.0)
     parser.add_argument("--max-chars", type=int, default=7000)
     parser.add_argument("--force", action="store_true", help="Replace an existing output file")
@@ -92,6 +94,21 @@ def flatten(text: str) -> str:
     return re.sub(r"\s+", " ", text.strip())
 
 
+def validate_shot_ids(images: list[Path], prompts: list[Path]) -> None:
+    def ids(paths: list[Path]) -> list[int]:
+        result = []
+        for path in paths:
+            match = re.match(r"(?:S)?(\d+)(?:[-_ .]|$)", path.stem, re.IGNORECASE)
+            if not match:
+                raise SystemExit(f"Missing leading shot ID in {path.name}; use --pair-by order for a reviewed upload order")
+            result.append(int(match.group(1)))
+        if len(set(result)) != len(result):
+            raise SystemExit("Duplicate shot IDs; use explicit unique shot filenames or a reviewed --pair-by order")
+        return result
+    if ids(images) != ids(prompts):
+        raise SystemExit("Image/prompt shot IDs do not match; review missing shots before batching")
+
+
 def main() -> None:
     args = parse_args()
     if args.duration_seconds <= 0 or args.max_chars <= 0:
@@ -117,6 +134,9 @@ def main() -> None:
             f"Count mismatch: mode={args.mode}, pairing={args.pairing}, images={len(images)}, "
             f"expected prompts/tasks={expected}, found prompts={len(prompts)}"
         )
+
+    if args.mode == "single" and args.pair_by == "id":
+        validate_shot_ids(images, prompts)
 
     lines: list[str] = []
     for prompt_path in prompts:

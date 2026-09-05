@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "male-classical-reciter-01",
+  "display_name": "堂正男中音｜授权参考特征型",
+  "kind": "text_conditioned_voice_preset",
+  "status": "approved_optional",
+  "gender_presentation": "male",
+  "language": "zh-CN",
+  "approved_on": "2026-09-04",
+  "generation_model": "seed-audio-1.0",
+  "persona_file": "persona-base.md",
+  "default_audio_config": {
+    "format": "wav",
+    "sample_rate": 48000,
+    "speech_rate": -8,
+    "loudness_rate": 16,
+    "pitch_rate": -3
+  },
+  "audition": {
+    "file": "audition.wav",
+    "text": "暂凭杯酒涨精神。",
+    "duration_seconds": 5.825,
+    "channels": 2,
+    "integrated_lufs": -21.3,
+    "true_peak_dbfs": -4.6,
+    "sha256": "1de4106232e12cd952c2fc4655a8579a3b9f9c692fcb89e2ba96858a1218d6c3"
+  },
+  "source_policy": {
+    "raw_reference_included": false,
+    "description": "The preset stores a user-approved generated audition and generalized acoustic directions. It does not include or distribute the authorized source recording.",
+    "claim_boundary": "Voice-characteristic approximation from text instructions; not a voiceprint clone or historical voice reconstruction."
+  }
+}

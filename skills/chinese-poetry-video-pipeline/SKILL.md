@@ -1,103 +1,80 @@
 ---
 name: chinese-poetry-video-pipeline
-description: Plan and produce Chinese-poetry aesthetic videos, including long-form and full-text works, from verified interpretation and story scripting through visual direction, keyframes, MiniMax H3 image-to-video prompts, ChatCut editing, export, cover, title, and social copy. Use for 古诗词意境短片、东方美学诗词视频、诗词或古文全篇影像化及其中任一延续阶段；do not use for unrelated generic fantasy videos.
+description: Produce or continue Chinese-poetry aesthetic videos, including full-text and long-form works, from verified interpretation, visual direction and narration through keyframes, MiniMax H3, ChatCut editing and a verified publishing package. Use for 古诗词意境短片、诗词或古文全篇影像化及其中任一延续阶段；not unrelated generic fantasy videos.
 ---
 
 # Chinese Poetry Video Pipeline
 
-Turn one poem into a coherent, reviewable production system. The poem determines the visual medium, motion, sound, and editing rhythm; do not begin from a reusable “古风人物＋风景” look.
+Let the poem determine the medium, motion, sound and rhythm. A useful result expresses a specific relationship or experience from the poem; a reusable “古风人物＋风景” look is insufficient.
 
-## Operating modes
+## Start with scope and existing work
 
-- **End to end:** take one poem from selection to publish-ready package.
-- **Stage only:** complete only the requested stage and leave a precise next step.
-- **Continue:** inspect existing project state and approved assets before doing new work. Preserve approved decisions unless the user changes them.
-- **Batch series:** keep publishing identity consistent, but deliberately vary each poem’s visual medium, palette, composition, focal lengths, and motion grammar.
-- **Long form:** for a full text, multi-chapter work, or target longer than 35 seconds, remove the default duration cap, lock a reviewable story script before storyboarding, and divide production into approved chapters and scene cards.
-- **High-fidelity reproduction:** when the user asks for the same series identity across machines or projects, read [references/reproducibility.md](references/reproducibility.md), verify the target environment, use the bundled style anchors, and score conformance before delivery.
+- **End to end:** one poem through a publishable package.
+- **Stage only:** complete the requested stage and record the next action; skip unrelated gates.
+- **Continue:** read current state, approval evidence and actual asset paths. Preserve approved pictures, original audio, typography and timelines unless the user changes the decision. Missing JSON does not mean a project is new: inspect current-state notes and the asset index. Keep an established folder layout.
+- **Batch series:** share publishing identity while choosing each poem's medium, palette and camera language deliberately.
+- **Long form / full text:** use the story-script route for explicit full-text adaptation, chapters or complex narrative. Duration alone does not require another stage; a 37-second short poem can keep its simple sequence.
+- **Reproduction:** compare selected style anchors and recorded creative decisions; do not promise identical pixels or invent a similarity percentage.
 
-## Required routing
+## Load only the current stage
 
-Read [references/quality-gates.md](references/quality-gates.md) for every use. Then read only the stage references needed now:
+Read the relevant gate in [quality-gates.md](references/quality-gates.md), then the reference needed now:
 
-- Selection, source text, or interpretation: [references/poetry-interpretation.md](references/poetry-interpretation.md)
-- Full-text adaptation, story structure, narration, chapters, or scene cards: [references/story-script.md](references/story-script.md)
-- Style, storyboard, composition, or still-image prompts: [references/visual-system.md](references/visual-system.md)
-- MiniMax H3 prompts, batch files, or cloud generation: [references/minimax-h3.md](references/minimax-h3.md)
-- ChatCut assembly, typography, approved-seal placement, sound, or export: [references/chatcut-editing.md](references/chatcut-editing.md)
-- Cover, poet-specific AI seal design, titles, or social copy: [references/publishing.md](references/publishing.md)
-- Final delivery, versioning, manifest, or handoff: [references/release-package.md](references/release-package.md)
-- Cross-machine installation, style matching, or a “90% similar” request: [references/reproducibility.md](references/reproducibility.md)
+| Work | Reference |
+|---|---|
+| Source, selection, interpretation | [poetry-interpretation.md](references/poetry-interpretation.md) |
+| Full-text coverage, chapters, scene cards | [story-script.md](references/story-script.md) |
+| Style, storyboard, composition, still prompts | [visual-system.md](references/visual-system.md) |
+| H3 prompts, batch files, generation | [minimax-h3.md](references/minimax-h3.md) |
+| Voice route, persona, auditions, audio QA | [poetry-voice.md](references/poetry-voice.md) |
+| Assembly, typography, seal placement, export | [chatcut-editing.md](references/chatcut-editing.md) |
+| Cover, dedicated AI seal, titles, copy | [publishing.md](references/publishing.md) |
+| Final package, acceptance, safe update | [release-package.md](references/release-package.md) |
+| Environment and cross-machine reproduction | [reproducibility.md](references/reproducibility.md) |
 
-When starting a new project, use `scripts/init_project.py` unless the user already has a clear folder structure. Before a MiniMax WebUI batch, use `scripts/build_h3_batch.py` to validate prompt fields and produce one physical line per task. After the final export, cover, copy, and quality record pass, use `scripts/build_release_package.py` to create the immutable standard output package.
+Use `scripts/init_project.py` for a new project without an established layout; add `--long-form` when a story script is needed. Do not initialize over existing work.
 
-## State machine
+## Production order
 
-Track one current stage and one next action in `00-project-state.json`.
+Track the active stage and next action in existing project state. These are dependencies, not a requirement to redo completed stages.
 
-| Stage | Required result | Gate to advance |
-|---|---|---|
-| `selected` | verified poem candidate and production fit | text/version is reliable; poem has a visual contradiction and motion potential |
-| `interpreted` | literal meaning, emotional engine, visual thesis, sound thesis | the concept explains more than a literal tableau |
-| `scripted` | approved story spine, chapter arc, narration plan, and scene cards | source coverage, value reversal, duration budget, and image/narration separation pass |
-| `visual_approved` | style bible, sequence arc, lens/composition matrix | consecutive shots differ meaningfully; style belongs to this poem |
-| `keyframes_approved` | numbered prompts and approved 3:4 stills | every still passes composition, clarity, anatomy, gaze, continuity, and texture checks |
-| `h3_prompts_ready` | readable prompts, batch text, upload order | image/task/prompt counts match; each task has executable motion and no contradictions |
-| `clips_approved` | downloaded H3 clips and shot-level QC | identity, geometry, motion, camera, sound, and duration are usable |
-| `chatcut_edited` | editable ChatCut timeline with text, sound, and the approved custom AI seal | pacing, typography, narration, seal hierarchy, and overlays pass composed-frame review |
-| `exported` | verified local MP4 and project export record | resolution, fps, duration, audio, and representative frames are correct |
-| `publish_ready` | versioned standard output package | final video, cover, copy, seal records, source record, QA, manifest, and checksums are complete and internally consistent |
+| Stage | Evidence needed |
+|---|---|
+| `selected` | Reliable text/version and production scope |
+| `interpreted` | Literal meaning, visual thesis, sound thesis; facts separate from inference |
+| `scripted` when applicable | Approved text coverage, story spine, chapter arc and scene cards |
+| `sound_planned` | Sound route, actual recitation text, pronunciation and per-line time budget |
+| `visual_approved` | Poem-specific medium, sequence and composition; intentional repetition is allowed |
+| `keyframes_approved` | Actual frames pass geometry, gaze, continuity, clarity and sequence review |
+| `h3_prompts_ready` | Correct image/task mapping, executable motion and durations that accommodate the sound plan |
+| `clips_approved` | Downloaded clips pass motion, identity, geometry, sound and usable-duration checks |
+| `voice_approved` when applicable | Approved existing sound or newly reviewed narration; actual timing fits the visual map |
+| `chatcut_edited` | Editable timeline, composed-frame review, text/sound timing and approved dedicated seal |
+| `exported` | Local export fully decodes and matches settings; actual picture and sound reviewed |
+| `publish_ready` | Current files match approval evidence; package, state, manifest and checksums agree |
 
-Do not jump from interpretation directly to paid video generation. A user may authorize an end-to-end run, but costly cloud submission still requires approved final parameters and expected cost unless that authorization was already explicit.
+Before costly video production, choose **approved existing/H3 original sound, H3-generated narration, independent narration, user recording, or no narration**. Independent narration uses an approved audition or trial read to budget timing. H3-generated narration uses a spoken window planned before generation and checked afterward. Keep approved original sound without forcing another audition or persona.
 
-## Shared production invariants
+## Creative and operational rules
 
-1. **Begin with the poem’s conflict.** Examples of useful structures include繁华与孤独、天上与人间、盛时与迟暮、物是与人非、路阻与心行. Do not treat these examples as a fixed catalog.
-2. **Translate, do not illustrate mechanically.** Every shot needs a visual proposition: a relationship, transformation, delay, absence, weight, distance, or reversal.
-3. **Choose a fresh visual language per poem.** Series continuity should come mainly from clear information hierarchy, per-poem seal quality, pacing discipline, and quality—not identical scenery, color grading, character framing, or a reused generic stamp.
-4. **Vary camera grammar.** Never use the same view, focal-length family, subject scale, and composition in consecutive shots. Consider high distance, deep distance, and level distance from Chinese painting where they strengthen meaning.
-5. **Build depth structurally.** Use foreground occlusion, scale, paths, bridges, water, cloth, bamboo, architecture, or light to connect foreground–midground–background. Fog may separate planes but must not hide structure.
-6. **Keep images clear.** No smear, repeated fractured texture, texture proliferation, indiscriminate glow, heavy fog, soft-focus masking, malformed hands, duplicated figures, unreadable architecture, accidental text, or watermark.
-7. **Keep movement physically executable.** Describe a countable action path, consistent wind direction, object attachment, camera direction, and end state. Do not force walking when the composition gives the character nowhere to go.
-8. **Regenerate structural failures.** Repeated inpainting often creates blur and broken texture. Preserve approved elements in a new generation prompt and regenerate the whole frame when composition or geometry is wrong.
-9. **Default delivery shape.** Unless the user specifies otherwise: 3:4 vertical; 20–30 second final; 4–7 shots; 8-second H3 source clips with editable head/tail handles; ChatCut timeline 1080×1440 at 30 fps; H.264 1080p export.
-10. **Verify pixels, not descriptions.** Inspect actual stills, generated clips, composed ChatCut frames, and exported files before reporting completion.
-11. **Package, do not dump.** Keep publish-ready assets separate from production archives. A final package is versioned and immutable; a correction creates `v02` instead of silently replacing `v01`.
-12. **Define similarity before claiming it.** A score near 90 means the same creative decisions, visual discipline, prompt grammar, edit identity, and delivery contract—not identical generated pixels. Exact frames cannot be guaranteed across model versions or random generations.
-13. **Separate text, narration, and image.** In long-form work, verified source wording, the final spoken track, and the visual action plan are three linked but distinct layers. Never disguise creative bridge text as the original, and never make every image mechanically repeat the narration.
+1. Derive shots from the poem's experience: tension, accumulation, observation, absence, distance, reversal or resonance. An ending need not resolve or reverse anything.
+2. Use camera variety and depth when they help meaning. Fixed-view contrasts, two-shot films, flat media and quiet close-ups are valid. Use a matrix to find accidental repetition, not to satisfy a number.
+3. Keep gaze, anatomy, clothing attachment, architecture, scale and wind direction legible. Fog and texture must not conceal broken structure.
+4. Specify executable motion: one main camera direction, an action path and an end state. Do not force walking without a path or replay a completed action.
+5. Approve a representative frame before extending a new direction. Review the sequence together; redo only the failed shot unless the shared direction itself failed.
+6. Defaults are starting points: 3:4, 20–30 seconds, often 4–7 shots, often 8-second H3 sources, 1080×1440 at 30 fps and H.264 export. Project timing, supported model settings and user choices take precedence.
+7. Keep original text, spoken text and visual action distinct, including in long-form work. Never disguise bridge text as the original.
+8. Dedicated AI seals remain poem/poet-specific approved assets with verified text, design rationale and generation records. Do not substitute generic stamps or claim historical authenticity.
+9. A text voice preset guides character; it does not lock speaker identity. For exact reuse, prefer approved audio or an explicitly authorized, supported reference-audio workflow. The bundled generator is text-conditioned.
+10. Inspect real pixels and sound. ASR, returned subtitles and loudness cannot certify pronunciation or performance. Machine packing cannot grant human approval.
+11. Keep one current package by default; create another version when history or parallel delivery requires it. Check the old state format before replacement and retain the previous package until package and state both commit.
 
-## Tool coordination
+## Tools and handoffs
 
-- Use the `imagegen` skill for keyframe creation, image editing, and poet-specific seal generation.
-- For current poem text, authorship, variants, or historical interpretation, use reliable primary or authoritative sources when verification is needed; distinguish source facts from creative inference.
-- For ChatCut work, load the relevant ChatCut skills. Commonly needed: `chatcut:chatcut-plugin-basics`, `chatcut:asset-import`, `chatcut:create-motion-graphics`, `chatcut:verification`, and `chatcut:export`.
-- For a user-operated MiniMax H3 WebUI, prepare files and exact input order first. Use browser/computer control only when requested or authorized. Record task IDs and do not silently resubmit failed paid tasks.
-- On a new computer, run `scripts/check_environment.py` before beginning end-to-end production. Missing ChatCut or H3 access changes the available stage; it is not silently replaced by another tool.
-
-## Review rhythm
-
-- Present poem interpretation and the visual thesis together.
-- For long-form or full-text work, present the one-sentence story, chapter arc, narration policy, recurring motif, value reversal, and scene-card sample before keyframe generation.
-- Present the sequence plan before generating all keyframes when the direction is new.
-- Generate or approve a representative first frame before batching a style-sensitive sequence.
-- Review stills as a sequence, not only one by one.
-- Fix only the failing shot once the sequence style is approved.
-- At each handoff, state: current stage, approved artifacts, verification evidence, remaining risk, and the single next action.
-
-## Deliverables
-
-A complete project should contain:
-
-- verified poem and interpretation;
-- an approved story script for long-form/full-text work, including source coverage, narration, chapters, scene cards, transitions, and sound progression;
-- style bible, storyboard, and shot-variation matrix;
-- numbered keyframe prompts and approved images;
-- per-shot H3 prompts, batch prompt file, upload order, and task log;
-- approved generated clips;
-- ChatCut project/timeline record and visual QC;
-- verified export;
-- cover, title options, note copy, and hashtags.
-- an approved poet- or poem-specific AI seal asset, its design brief and prompt, and exact-text QA.
-- a versioned standard output package containing publish-ready assets, production archive, manifest, checksums, and final QA.
-
-Do not fabricate missing files, task IDs, exports, approvals, or verification. Mark them pending in project state.
+- Use `imagegen` for keyframes, edits and seals; use relevant ChatCut skills for editor work.
+- Verify poem facts and current tool settings against reliable sources when needed. Label inference.
+- Before H3 batching, run `scripts/build_h3_batch.py`; single-frame batches match leading shot IDs by default. Use `--pair-by order` only after reviewing a deliberately different upload order. Record task IDs; do not silently resubmit paid failures.
+- For new Seed Audio narration, read the voice reference, preview with `scripts/generate_poetry_audio.py --dry-run`, then submit only within explicit cost authorization. Keys stay in the process environment or local Keychain, never in prompts, command arguments, logs or packages.
+- On another computer, use `scripts/check_environment.py`. Missing tools change the available stage; do not silently replace the user's tool choice.
+- After export and final review, run `scripts/build_release_package.py --check-only` with recorded input paths. Build or refresh only after it passes. Reuse existing user approval evidence when it applies; do not ask again merely to fill a form.
+- At a handoff, give the current stage, approved assets, checks, remaining issue and one next action. Do not invent missing files, approvals or completion.

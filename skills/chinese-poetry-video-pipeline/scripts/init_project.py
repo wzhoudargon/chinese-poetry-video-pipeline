@@ -17,6 +17,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--author", default="", help="Author")
     parser.add_argument("--dynasty", default="", help="Dynasty")
     parser.add_argument("--duration", type=int, default=24, help="Target final duration in seconds")
+    parser.add_argument("--long-form", "--full-text", action="store_true", help="Include a story script and full-text coverage stage")
     return parser.parse_args()
 
 
@@ -53,6 +54,8 @@ def main() -> None:
         "04-H3/输出/候选",
         "04-H3/输出/已确认",
         "05-ChatCut",
+        "05-ChatCut/旁白/试听",
+        "05-ChatCut/旁白/已确认",
         "06-发布/封面",
         "06-发布/印章/候选",
         "06-发布/印章/已确认",
@@ -63,7 +66,7 @@ def main() -> None:
         (project / relative).mkdir(parents=True, exist_ok=False)
 
     state = {
-        "schema_version": 3,
+        "schema_version": 4,
         "project": {
             "title": args.title,
             "author": args.author,
@@ -72,7 +75,7 @@ def main() -> None:
         },
         "target": {
             "final_duration_seconds": args.duration,
-            "long_form": args.duration > 35,
+            "long_form": args.long_form,
             "aspect_ratio": "3:4",
             "h3_source_clip_seconds": 8,
             "timeline": {"width": 1080, "height": 1440, "fps": 30},
@@ -86,16 +89,21 @@ def main() -> None:
             "keyframes": False,
             "cloud_generation_cost": False,
             "clips": False,
+            "voice_persona": False,
+            "voice_audition": False,
+            "voice_final": False,
             "chatcut_edit": False,
             "seal_asset": False,
             "final_export": False,
             "release_package": False,
         },
         "artifacts": {
-            "story_script_path": "01-诗词与意境/故事脚本.md",
+            "story_script_path": "01-诗词与意境/故事脚本.md" if args.long_form else "",
             "approved_keyframes": [],
             "h3_task_ids": [],
             "approved_clips": [],
+            "approved_voice_audition": "",
+            "approved_voice_segments": [],
             "chatcut_project_id": "",
             "export_path": "",
             "cover_path": "",
@@ -105,6 +113,7 @@ def main() -> None:
             "release_package_version": "",
             "release_package_status": "",
         },
+        "sound_plan": {"route": "", "timing_evidence": "", "approved_existing_audio": []},
         "verification": [],
         "open_issues": [],
         "next_step": "Verify the poem text and complete the interpretation brief.",
@@ -141,12 +150,12 @@ def main() -> None:
         # 意境拆解
 
         - 字面事件：
-        - 情绪发动机：____ vs ____
+        - 情绪或张力：
         - 时间结构：
         - 空间结构：
-        - 核心物象及变化：
-        - 末句转折：
-        - 视觉命题：这不是在画____，而是在画____。
+        - 核心物象或关系：
+        - 结尾落点：
+        - 视觉命题：通过何种关系表达何种感受。
         - 声音命题：声音从____变为____，让观众感到____。
 
         ## 朗诵与画面
@@ -155,59 +164,60 @@ def main() -> None:
         |---|---|---|---|
         """,
     )
-    write_text(
-        project / "01-诗词与意境/故事脚本.md",
-        f"""
-        # 《{args.title}》故事脚本 v01
+    if args.long_form:
+        write_text(
+            project / "01-诗词与意境/故事脚本.md",
+            f"""
+            # 《{args.title}》故事脚本 v01
 
-        > 目标时长：{args.duration} 秒
-        > 适用模式：{'长片/全文' if args.duration > 35 else '短片（按需使用）'}
+            > 目标时长：{args.duration} 秒
+            > 适用模式：{'长片/全文' if args.long_form else '短片（按需使用）'}
 
-        ## 导演总纲
+            ## 导演总纲
 
-        - 文本范围与版本：
-        - 一句话故事：
-        - 观众起点 → 终点：
-        - 真正的主角：
-        - 贯穿母题及变化：
-        - 价值反转：
-        - 旁白规则：
-        - 视觉与声音总弧线：
+            - 文本范围与版本：
+            - 一句话故事：
+            - 观众起点 → 终点：
+            - 真正的主角：
+            - 贯穿母题及变化：
+            - 结尾落点：
+            - 旁白规则：
+            - 视觉与声音总弧线：
 
-        ## 时长与章节表
+            ## 时长与章节表
 
-        | 章 | 时段 | 原文范围/字数 | 戏剧任务 | 进入→变化→退出 | 母题变化 | 朗诵/留白 | 场数 |
-        |---|---|---|---|---|---|---|---:|
+            | 章 | 时段 | 原文范围/字数 | 戏剧任务 | 进入→变化→退出 | 母题变化 | 朗诵/留白 | 场数 |
+            |---|---|---|---|---|---|---|---:|
 
-        ## 场景卡
+            ## 场景卡
 
-        ### C01-S01 场名｜00:00–00:00
+            ### C01-S01 场名｜00:00–00:00
 
-        - 原文/旁白：
-        - 画面故事：
-        - 戏剧任务：
-        - 主动作与结束状态：
-        - 声音：
-        - 转场：
-        - 风险：
+            - 原文/旁白：
+            - 画面故事：
+            - 戏剧任务：
+            - 主动作与结束状态：
+            - 声音：
+            - 转场：
+            - 风险：
 
-        ## 全文覆盖表
+            ## 全文覆盖表
 
-        | 原文段落 | 朗诵策略 | 对应章/场 | 画面功能 | 状态 |
-        |---|---|---|---|---|
+            | 原文段落 | 朗诵策略 | 对应章/场 | 画面功能 | 状态 |
+            |---|---|---|---|---|
 
-        ## 导演审核
+            ## 导演审核
 
-        - 故事主轴：待审核
-        - 全文覆盖：待审核
-        - 时长预算：待审核
-        - 章节推进：待审核
-        - 画面可执行性：待审核
-        - 声音与转场：待审核
-        - 价值反转：待审核
-        - 用户批准：待审核
-        """,
-    )
+            - 故事主轴：待审核
+            - 全文覆盖：待审核
+            - 时长预算：待审核
+            - 章节推进：待审核
+            - 画面可执行性：待审核
+            - 声音与转场：待审核
+            - 结尾落点：待审核
+            - 用户批准：待审核
+            """,
+        )
     write_text(
         project / "02-视觉方案/风格圣经.md",
         """
@@ -249,7 +259,7 @@ def main() -> None:
 
         - 模型：待确认
         - 模式：批量单图 / 首尾帧（待确认）
-        - 单段时长：8 秒
+        - 单段时长：按声音预算确定，8 秒为默认起点
         - 分辨率：待确认
         - 原生声音：待确认
         - 预计任务数：待确认
@@ -269,6 +279,92 @@ def main() -> None:
         """,
     )
     write_text(
+        project / "05-ChatCut/旁白/诗人声音设定.md",
+        """
+        # 诗人声音设定
+
+        > 本文件描述的是依据生平与作品处境进行的创作性声音设计，不是诗人真实历史声线的复原。
+
+        ## 可核实事实
+
+        - 创作时期与年龄区间：待核实
+        - 身份、处境与地域经历：待核实
+        - 作品气质的可靠依据：待核实
+        - 来源与不确定性：待补充
+
+        ## 本片创作推断
+
+        - 年龄感：
+        - 性别与声区：
+        - 音色重量：
+        - 呼吸与录音距离：
+        - 语速、停顿与句尾：
+        - 各句情绪动作：
+
+        ## 审美美化
+
+        - 保留：
+        - 美化：
+        - 禁止：年轻播音腔、新闻腔、舞台朗诵腔、故作磁性、耳语、过度苍老（按本诗修改）
+
+        ## 发音表
+
+        | 词 | 拼音/声调 | 分词与重音 | 人工复核 |
+        |---|---|---|---|
+
+        ## 试听范围与目标
+
+        - 正文：
+        - 目标时长：
+        - 句间停顿：
+        - 画面进入点与结束余韵：
+        """,
+    )
+    write_text(
+        project / "05-ChatCut/旁白/试听文本.txt",
+        """
+        待定稿。
+        """,
+    )
+    write_text(
+        project / "05-ChatCut/旁白/生成与质检记录.md",
+        """
+        # 旁白生成与质检记录
+
+        - 模型：seed-audio-1.0
+        - 生成方式：纯文本人物设定
+        - 密钥来源：本机环境变量或 macOS 钥匙串；不得记录密钥值
+        - 人物卡版本：
+        - 付费试听授权：未批准
+        - 用户批准试听：PENDING
+
+        | 版本 | 正文 | 非敏感参数 | 实际时长 | 机器检查 | 人工听审 | 结论 |
+        |---|---|---|---:|---|---|---|
+
+        ## 人工听审
+
+        - 年龄与身份：
+        - 咬字、同音字与异读：
+        - 语速、停顿、重音与气息：
+        - 爆音、齿音、削波、底噪与多余声场：
+
+        ## 最终批准
+
+        - 批准声线：
+        - 已确认分句：
+        - 不得改变项：
+        """,
+    )
+    write_text(
+        project / "05-ChatCut/旁白/镜头同步表.md",
+        """
+        # 旁白与镜头同步表
+
+        | 段 | 正文 | 音频文件 | 实际时长 | 镜头可用区间 | 入点 | 句内动作 | 尾部余韵 |
+        |---|---|---|---:|---|---:|---|---:|
+        """,
+    )
+    write_text(
         project / "05-ChatCut/剪辑方案.md",
         """
         # ChatCut 剪辑方案
@@ -277,7 +373,7 @@ def main() -> None:
         - 主书法字体：待确认
         - 已批准的个性化 AI 印章资产：待确认
         - 印章出现方式与位置依据：待确认
-        - 旁白策略：统一后期旁白 / H3 原声（待确认）
+        - 旁白策略：Seed Audio 已批准分句 / 人工录制 / 无旁白（待确认）
 
         | 成片时段 | 源片段与取段 | 诗句 | 文字动效 | 声音 | 转场 |
         |---|---|---|---|---|---|
@@ -425,6 +521,17 @@ def main() -> None:
         - [ ] 成片可播放且首尾正常
         - [ ] 标题、笔记与视频表达同一视觉命题
         - [ ] 平台安全区无重要信息被裁切
+
+        - 成品批准：PENDING
+        - 批准依据：待补充已有用户批准的日期、范围和记录位置，不为填表重新请求批准
+        - 人工听审：PENDING
+        - video_sha256：待补充
+        - cover_sha256：待补充
+        - seal_sha256：待补充
+
+        ## 验收结论
+
+        PENDING
         """,
     )
     write_text(
@@ -434,10 +541,10 @@ def main() -> None:
 
         全部发布素材通过验收后，运行 Skill 内的 `scripts/build_release_package.py`。
 
-        - 每个版本建立独立目录，例如 `诗名_东方美学短片_2026-08-30_v01`；
+        - 默认只维护一个当前交付目录，例如 `诗名_东方美学短片_2026-08-30_v01`；
         - `01-发布成品` 只放最终视频、最终封面和可直接复制的发布文案；
         - `03-制作归档` 只保留已确认素材和可复现记录，不收纳失败候选；
-        - 任何修正都新建下一版本，不覆盖既有交付包。
+        - 修正当前包时可原位更新；只有需要保留历史、审计快照或并行方案时才另建版本。
         """,
     )
 

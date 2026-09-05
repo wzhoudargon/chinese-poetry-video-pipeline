@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import getpass
 import hashlib
 import json
 import os
@@ -12,6 +13,9 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+
+
+KEYCHAIN_SERVICE = "codex-poetry-audio-api-key"
 
 
 def parse_args() -> argparse.Namespace:
@@ -63,6 +67,36 @@ def font_status() -> dict[str, Any]:
         return {"available": None, "detail": "font check failed; verify in the editor"}
 
 
+def seed_audio_credential_status() -> dict[str, Any]:
+    if os.environ.get("SEED_AUDIO_API_KEY", "").strip():
+        return {"available": True, "source": "process environment", "secret_read": False}
+    security = shutil.which("security")
+    if not security:
+        return {"available": False, "source": "not configured", "secret_read": False}
+    try:
+        result = subprocess.run(
+            [
+                security,
+                "find-generic-password",
+                "-a",
+                getpass.getuser(),
+                "-s",
+                KEYCHAIN_SERVICE,
+            ],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=8,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return {"available": None, "source": "check failed", "secret_read": False}
+    return {
+        "available": result.returncode == 0,
+        "source": "macOS Keychain" if result.returncode == 0 else "not configured",
+        "secret_read": False,
+    }
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -110,6 +144,7 @@ def main() -> None:
     ffprobe = command_version("ffprobe", ["-version"])
     python_ok = sys.version_info >= (3, 10)
     chatcut_versions = find_chatcut_skills(codex_home)
+    seed_audio = seed_audio_credential_status()
     report: dict[str, Any] = {
         "status": "PASS",
         "skill_version": skill_version,
@@ -120,6 +155,7 @@ def main() -> None:
                 "minimum": "3.10",
             },
             "ffprobe": ffprobe,
+            "ffmpeg": ffmpeg,
             "skill_structure": {
                 "available": (skill_root / "SKILL.md").is_file(),
                 "path": str(skill_root),
@@ -133,10 +169,12 @@ def main() -> None:
             "style_anchors": anchors,
             "image_generation": "MANUAL_CHECK",
             "minimax_h3_access": "MANUAL_CHECK",
+            "seed_audio_credential": seed_audio,
         },
         "notes": [
             "Image generation and MiniMax H3 access require account/UI checks.",
             "A missing ChatCut plugin permits planning and prompt production, but not the documented edit stage.",
+            "The Seed Audio credential check only tests presence; it never reads or prints the secret value.",
         ],
     }
     hard_failures = [
@@ -169,6 +207,8 @@ def main() -> None:
         print(f"Ma Shan Zheng: {font_label} ({font['detail']})")
         print("Image generation: MANUAL CHECK")
         print("MiniMax H3 access and current cost: MANUAL CHECK")
+        seed_label = "READY" if seed_audio["available"] is True else "NOT CONFIGURED"
+        print(f"Seed Audio local credential: {seed_label} ({seed_audio['source']})")
     raise SystemExit(1 if report["status"] == "BLOCKED" else 0)
 
 

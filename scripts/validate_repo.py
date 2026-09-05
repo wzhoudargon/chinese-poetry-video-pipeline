@@ -71,6 +71,15 @@ def main() -> None:
         if path.stat().st_size >= 100 * 1024 * 1024:
             fail(f"GitHub file limit exceeded: {item['file']}")
 
+    for preset_path in sorted((SKILL / "assets/voice-presets").glob("*/preset.json")):
+        preset = json.loads(preset_path.read_text(encoding="utf-8"))
+        audition = preset_path.parent / preset["audition"]["file"]
+        persona = preset_path.parent / preset["persona_file"]
+        if not persona.is_file() or not audition.is_file():
+            fail(f"Incomplete voice preset: {preset_path.parent.name}")
+        if sha256(audition) != preset["audition"]["sha256"]:
+            fail(f"Voice audition checksum mismatch: {preset_path.parent.name}")
+
     print("Portable skill repository is valid")
 
 
