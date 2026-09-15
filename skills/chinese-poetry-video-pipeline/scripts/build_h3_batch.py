@@ -67,7 +67,10 @@ def validate_prompt(path: Path, text: str, mode: str, duration: float, max_chars
         problems.append("missing [Shot 1]")
 
     if mode == "single":
+        # Canonical I2VA instruction, plus legacy single-picture spellings.
         accepted_alignments = (
+            "For the target video, at 0.00 seconds into the target video, "
+            "<Picture 1> (from [Shot 1]) is fully referenced.",
             "How the reference pictures align with the target video",
             "How the reference picture aligns with the target video",
         )
