@@ -31,6 +31,10 @@ def parse_args() -> argparse.Namespace:
                         help="Single-frame tasks match leading shot numbers; use order only for a reviewed upload order")
     parser.add_argument("--duration-seconds", type=float, default=8.0)
     parser.add_argument("--max-chars", type=int, default=7000)
+    parser.add_argument("--output-profile", choices=("generic", "studio"), default="generic",
+                        help="Studio prepends explicit per-task Chinese duration prefixes")
+    parser.add_argument("--durations-seconds", nargs="+", type=float,
+                        help="One explicit duration per prompt; required for Studio output")
     parser.add_argument("--force", action="store_true", help="Replace an existing output file")
     return parser.parse_args()
 
@@ -141,11 +145,25 @@ def main() -> None:
     if args.mode == "single" and args.pair_by == "id":
         validate_shot_ids(images, prompts)
 
+    if args.output_profile == "studio" and args.durations_seconds is None:
+        raise SystemExit("Studio output requires --durations-seconds for every task; no default fallback")
+    if args.durations_seconds is not None and len(args.durations_seconds) != len(prompts):
+        raise SystemExit("Duration count must match prompt count")
+    if output in [p.resolve() for p in prompts]:
+        raise SystemExit("Output must not overwrite a prompt source")
+    durations = args.durations_seconds or [args.duration_seconds] * len(prompts)
     lines: list[str] = []
-    for prompt_path in prompts:
+    for prompt_path, duration in zip(prompts, durations):
         text = prompt_path.read_text(encoding="utf-8").strip()
-        validate_prompt(prompt_path, text, args.mode, args.duration_seconds, args.max_chars)
-        lines.append(flatten(text))
+        validate_prompt(prompt_path, text, args.mode, duration, args.max_chars)
+        if args.output_profile == "studio":
+            from export_studio_batch import studio_line
+            try:
+                lines.append(studio_line(text, duration))
+            except ValueError as exc:
+                raise SystemExit(f"{prompt_path.name}: {exc}") from exc
+        else:
+            lines.append(flatten(text))
 
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
